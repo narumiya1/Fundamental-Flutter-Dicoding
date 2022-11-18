@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:restaurant_submission1/local_data..dart';
 import 'package:restaurant_submission1/styles.dart';
 
@@ -11,6 +12,14 @@ class RestaurantDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double mediumFontSize = 20;
+
+    Color whiteColor = Color(0xffFFFFFF);
+
+    TextStyle whteTextStyle = GoogleFonts.nunito(
+      color: whiteColor,
+    );
+
     return Scaffold(
       appBar: AppBar(title: Text(restaurant.name)),
       body: Padding(
@@ -61,28 +70,77 @@ class RestaurantDetailPage extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.all(4.0),
                 child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Icon(
-                      Icons.location_city_outlined,
-                      size: 27,
-                      color: Colors.white,
-                    ),
+                    // const Icon(
+                    //   Icons.location_city_outlined,
+                    //   size: 27,
+                    //   color: Colors.white,
+                    // ),
                     Padding(
-                      padding: EdgeInsets.only(left: 8.0),
+                      padding: EdgeInsets.only(left: 14.0),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            restaurant.city,
-                            style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w600),
+                          Text.rich(
+                            TextSpan(
+                              text: 'City : ',
+                              style: whteTextStyle.copyWith(
+                                fontSize: mediumFontSize,
+                              ),
+                              children: [
+                                TextSpan(
+                                  text: ' ${restaurant.city}',
+                                  style: whteTextStyle.copyWith(
+                                    fontSize: mediumFontSize,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ],
                       ),
                     ),
+                    FavoriteButton(),
                   ],
+                ),
+              ),
+            ),
+            const SizedBox(
+              height: 8,
+            ),
+            Container(
+              decoration: BoxDecoration(
+                color: secondaryColor,
+                borderRadius: BorderRadius.circular(8.0),
+              ),
+              child: Center(
+                child: IgnorePointer(
+                  child: RatingBar(
+                    initialRating: restaurant.rating,
+                    direction: Axis.horizontal,
+                    allowHalfRating: true,
+                    itemCount: 5,
+                    itemPadding:
+                        EdgeInsets.symmetric(horizontal: 4.0, vertical: 16.0),
+                    ratingWidget: RatingWidget(
+                      full: Icon(
+                        Icons.star,
+                        color: Colors.amber,
+                      ),
+                      half: Icon(
+                        Icons.star_half,
+                        color: Colors.amber,
+                      ),
+                      empty: Icon(
+                        Icons.star_border_outlined,
+                        color: Colors.amber,
+                      ),
+                    ),
+                    onRatingUpdate: (rating) {
+                      print(rating);
+                    },
+                  ),
                 ),
               ),
             ),
@@ -211,6 +269,44 @@ class RestaurantDetailPage extends StatelessWidget {
               height: 8.0,
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class FavoriteButton extends StatefulWidget {
+  @override
+  _FavoriteButtonState createState() => _FavoriteButtonState();
+}
+
+class _FavoriteButtonState extends State<FavoriteButton> {
+  bool isFavorite = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.only(right: 14.0),
+      decoration: BoxDecoration(
+        color: const Color(0xff7c94b6),
+        borderRadius: BorderRadius.all(Radius.circular(50.0)),
+        border: Border.all(
+          color: Colors.amber,
+          width: 1.5,
+        ),
+      ),
+      child: CircleAvatar(
+        backgroundColor: Colors.white,
+        child: IconButton(
+          icon: Icon(
+            isFavorite ? Icons.favorite : Icons.favorite_border,
+            color: Colors.amber,
+          ),
+          onPressed: () {
+            setState(() {
+              isFavorite = !isFavorite;
+            });
+          },
         ),
       ),
     );
