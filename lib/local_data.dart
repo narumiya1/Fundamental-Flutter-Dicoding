@@ -11,12 +11,12 @@ class LocalRestaurant {
     required this.restaurants,
   });
 
-  List<Restaurant> restaurants;
+  List<RestaurantLocal> restaurants;
 
   factory LocalRestaurant.fromJson(Map<String, dynamic> json) =>
       LocalRestaurant(
-        restaurants: List<Restaurant>.from(
-            json["restaurants"].map((x) => Restaurant.fromJson(x))),
+        restaurants: List<RestaurantLocal>.from(
+            json["restaurants"].map((x) => RestaurantLocal.fromJson(x))),
       );
 
   Map<String, dynamic> toJson() => {
@@ -24,8 +24,8 @@ class LocalRestaurant {
       };
 }
 
-class Restaurant {
-  Restaurant({
+class RestaurantLocal {
+  RestaurantLocal({
     required this.id,
     required this.name,
     required this.description,
@@ -43,7 +43,8 @@ class Restaurant {
   double rating;
   Menus menus;
 
-  factory Restaurant.fromJson(Map<String, dynamic> json) => Restaurant(
+  factory RestaurantLocal.fromJson(Map<String, dynamic> json) =>
+      RestaurantLocal(
         id: json["id"],
         name: json["name"],
         description: json["description"],
