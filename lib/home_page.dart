@@ -19,37 +19,21 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   late RestaurantProvider provider;
-  Widget _appBar = Text(
-    'RestaurantApp #2',
-    style: GoogleFonts.nunito(fontSize: 20, fontWeight: FontWeight.w900),
-  );
+  Icon _searchIcon = Icon(Icons.search);
+
   final TextEditingController _filter = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Submission Restaurant 2'),
+        leading: IconButton(
+          icon: _searchIcon,
+          iconSize: 30,
+          onPressed: _search,
+        ),
       ),
       body: _buildData(context),
-      /*FutureBuilder<String>(
-        future: DefaultAssetBundle.of(context)
-            .loadString('assets/local_restaurant.json'),
-        builder: (context, snapshot) {
-          try {
-            final RestaurantList localRestaurant =
-                restaurantListFromJson(snapshot.data!);
-            return ListView.builder(
-              itemCount: localRestaurant.restaurants.length,
-              itemBuilder: (context, index) {
-                return _showList(context, localRestaurant.restaurants[index]);
-              },
-            );
-          } catch (e) {
-            return _showError(context);
-          }
-        },
-      ),
-      */
     );
   }
 
@@ -104,5 +88,9 @@ class _HomePageState extends State<HomePage> {
     return Container(
       color: Colors.red,
     );
+  }
+
+  void _search() {
+    setState(() {});
   }
 }
