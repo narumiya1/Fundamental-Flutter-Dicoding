@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:restaurant_submission1/local_data..dart';
-import 'package:restaurant_submission1/restarurant_detail_page.dart';
+import 'package:restaurant_submission1/model/list_model.dart';
+
 import 'package:restaurant_submission1/styles.dart';
+import 'package:restaurant_submission1/ui/detail_page.dart';
 
 import 'home_page.dart';
 
@@ -33,8 +34,12 @@ class MyApp extends StatelessWidget {
       ),
       initialRoute: HomePage.routeName,
       routes: {
-        HomePage.routeName: (context) => HomePage(),
-        RestaurantDetailPage.routeName: (context) => RestaurantDetailPage(
+        HomePage.routeName: (context) => const HomePage(),
+        // RestaurantDetailPage.routeName: (context) => RestaurantDetailPage(
+        //       restaurant:
+        //           ModalRoute.of(context)?.settings.arguments as Restaurant,
+        //     ),
+        DetailPage.routeName: (context) => DetailPage(
               restaurant:
                   ModalRoute.of(context)?.settings.arguments as Restaurant,
             ),

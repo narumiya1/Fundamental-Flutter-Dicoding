@@ -1,14 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:restaurant_submission1/local_data..dart';
+import 'package:provider/provider.dart';
+import 'package:restaurant_submission1/model/list_model.dart';
+import 'package:restaurant_submission1/provider/detail_provider.dart';
 import 'package:restaurant_submission1/styles.dart';
+import 'package:restaurant_submission1/widgets/detail.dart';
+
+import 'api_data/api_serv.dart';
 
 class RestaurantDetailPage extends StatelessWidget {
   static const routeName = '/restaurant_detail';
   final Restaurant restaurant;
+  final DetailProvider provider;
 
-  const RestaurantDetailPage({required this.restaurant});
+  const RestaurantDetailPage(
+      {required this.restaurant, required this.provider});
 
   @override
   Widget build(BuildContext context) {
@@ -19,8 +27,56 @@ class RestaurantDetailPage extends StatelessWidget {
     TextStyle whteTextStyle = GoogleFonts.nunito(
       color: whiteColor,
     );
+    DetailProvider _provider;
+    return ChangeNotifierProvider<DetailProvider>(
+      create: (_) => DetailProvider(apiService: ApiServ(), id: restaurant.id),
+      child: SafeArea(
+        child: Scaffold(
+          body: Consumer<DetailProvider>(
+            builder: (context, state, _) {
+              _provider = state;
+              if (state.state == ResultState.Loading) {
+                return Center(
+                  child: SpinKitHourGlass(
+                    color: Colors.amber,
+                    size: 50,
+                  ),
+                );
+              } else if (state.state == ResultState.HasData) {
+                var restaurant = state.result.restaurant;
+                return DetailRestaurant(
+                  restaurant: restaurant,
+                  provider: _provider,
+                );
+              } else if (state.state == ResultState.NoData) {
+                return Center(child: Text(state.message));
+              } else if (state.state == ResultState.Error) {
+                return Center(
+                    child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Image.asset("assets/no-wifi.png", width: 100),
+                    SizedBox(height: 10),
+                    Text("Koneksi terputus!"),
+                    ElevatedButton(
+                      child: Text("refresh"),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                    ),
+                  ],
+                ));
+              } else {
+                return Center(child: Text(''));
+              }
+            },
+          ),
+        ),
+      ),
+    );
+  }
 
-    return Scaffold(
+  /*return Scaffold(
       appBar: AppBar(title: Text(restaurant.name)),
       body: Padding(
         padding: const EdgeInsets.all(7.0),
@@ -272,7 +328,8 @@ class RestaurantDetailPage extends StatelessWidget {
         ),
       ),
     );
-  }
+  */
+
 }
 
 class FavoriteButton extends StatefulWidget {
