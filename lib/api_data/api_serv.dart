@@ -4,8 +4,7 @@ import 'package:http/http.dart' as http;
 import '../model/detail_model.dart';
 import '../model/list_model.dart';
 import '../model/review_model.dart';
-import '../model/search_model.dart';
-import '../restarurant_detail_page.dart';
+// import '../restarurant_detail_page.dart';
 
 class ApiServ {
   static final String _baseUrl = 'https://restaurant-api.dicoding.dev/';
@@ -24,15 +23,6 @@ class ApiServ {
     final response = await http.get(Uri.parse(_baseUrl + "detail/$id"));
     if (response.statusCode == 200) {
       return RestaurantDetail.fromJson(json.decode(response.body));
-    } else {
-      throw Exception('Failed to load');
-    }
-  }
-
-  Future<RestaurantSearch> getRestaurantSearchResult(String query) async {
-    final response = await http.get(Uri.parse(_baseUrl + "search?q=$query"));
-    if (response.statusCode == 200) {
-      return RestaurantSearch.fromJson(json.decode(response.body));
     } else {
       throw Exception('Failed to load');
     }

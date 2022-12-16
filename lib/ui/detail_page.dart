@@ -26,8 +26,8 @@ class DetailPage extends StatelessWidget {
               _provider = state;
               if (state.state == ResultState.Loading) {
                 return Center(
-                  child: SpinKitHourGlass(
-                    color: Colors.amber,
+                  child: SpinKitThreeBounce(
+                    color: Color.fromARGB(255, 7, 143, 255),
                     size: 50,
                   ),
                 );
@@ -46,7 +46,7 @@ class DetailPage extends StatelessWidget {
                   children: [
                     Image.asset("assets/no-wifi.png", width: 100),
                     SizedBox(height: 10),
-                    Text("Koneksi terputus!"),
+                    Text("Tidak ada Koneksi!"),
                     ElevatedButton(
                       child: Text("refresh"),
                       onPressed: () {

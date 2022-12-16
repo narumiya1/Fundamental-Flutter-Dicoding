@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '../api_data/api_serv.dart';
 import '../model/list_model.dart';
@@ -30,30 +31,45 @@ class CardRestaurant extends StatelessWidget {
       ),
       title: Text(
         restaurant.name,
-        style: Theme.of(context).textTheme.subtitle2,
+        style: GoogleFonts.nunito(
+          fontWeight: FontWeight.w500,
+          color: Colors.black,
+        ).copyWith(
+          fontSize: 16,
+        ),
       ),
       subtitle: Column(
         children: [
           Row(children: [
             Icon(
               Icons.location_pin,
-              size: 15,
+              size: 12,
               color: Colors.grey,
             ),
             Text(
               " " + restaurant.city,
-              style: Theme.of(context).textTheme.subtitle1,
+              style: GoogleFonts.nunito(
+                fontWeight: FontWeight.w500,
+                color: Colors.black,
+              ).copyWith(
+                fontSize: 14,
+              ),
             ),
           ]),
           Row(children: [
             Icon(
               Icons.star,
-              size: 15,
+              size: 12,
               color: Colors.yellow,
             ),
             Text(
               " " + restaurant.rating.toString(),
-              style: Theme.of(context).textTheme.subtitle1,
+              style: GoogleFonts.nunito(
+                fontWeight: FontWeight.w500,
+                color: Colors.black,
+              ).copyWith(
+                fontSize: 12,
+              ),
             ),
           ]),
         ],

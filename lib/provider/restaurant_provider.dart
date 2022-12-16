@@ -39,26 +39,4 @@ class RestaurantProvider extends ChangeNotifier {
       return _message = 'Error: $e';
     }
   }
-
-  Future<dynamic> getRestaurantSearchResult(String query) async {
-    try {
-      _state = ResultState.Loading;
-      notifyListeners();
-      final restaurantSearch =
-          await apiService.getRestaurantSearchResult(query);
-      if (restaurantSearch.restaurants.isEmpty) {
-        _state = ResultState.NoData;
-        notifyListeners();
-        return _message = 'Tidak ditemukan';
-      } else {
-        _state = ResultState.HasData;
-        notifyListeners();
-        return _restaurantResult = restaurantSearch;
-      }
-    } catch (e) {
-      _state = ResultState.Error;
-      notifyListeners();
-      return _message = 'Error: $e';
-    }
-  }
 }
