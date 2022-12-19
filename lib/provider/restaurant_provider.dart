@@ -3,14 +3,13 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import '../api_data/api_serv.dart';
+import '../result_state.dart';
 
-enum ResultState { Loading, NoData, HasData, Error }
 
 class RestaurantProvider extends ChangeNotifier {
   final ApiServ apiService;
-  final String id;
 
-  RestaurantProvider({required this.apiService, required this.id}) {
+  RestaurantProvider({required this.apiService}) {
     getAllRestaurants();
   }
 
@@ -26,15 +25,15 @@ class RestaurantProvider extends ChangeNotifier {
 
   Future<dynamic> getAllRestaurants() async {
     try {
-      _state = ResultState.Loading;
+      _state = ResultState.loading;
       notifyListeners();
       final restaurantList = await apiService.getRestaurantList();
       notifyListeners();
-      _state = ResultState.HasData;
+      _state = ResultState.hasData;
       notifyListeners();
       return _restaurantResult = restaurantList;
     } catch (e) {
-      _state = ResultState.Error;
+      _state = ResultState.error;
       notifyListeners();
       return _message = 'Error: $e';
     }

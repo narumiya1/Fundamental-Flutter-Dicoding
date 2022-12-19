@@ -1,15 +1,13 @@
 import 'dart:convert';
 
-import 'list_model.dart';
+SearchRestaurant searchRestaurantFromJson(String str) =>
+    SearchRestaurant.fromJson(json.decode(str));
 
-RestaurantSearch restaurantSearchFromJson(String a) =>
-    RestaurantSearch.fromJson(json.decode(a));
-
-String restaurantSearchToJson(RestaurantSearch data) =>
+String searchRestaurantToJson(SearchRestaurant data) =>
     json.encode(data.toJson());
 
-class RestaurantSearch {
-  RestaurantSearch({
+class SearchRestaurant {
+  SearchRestaurant({
     required this.error,
     required this.founded,
     required this.restaurants,
@@ -19,8 +17,8 @@ class RestaurantSearch {
   int founded;
   List<Restaurant> restaurants;
 
-  factory RestaurantSearch.fromJson(Map<String, dynamic> json) =>
-      RestaurantSearch(
+  factory SearchRestaurant.fromJson(Map<String, dynamic> json) =>
+      SearchRestaurant(
         error: json["error"],
         founded: json["founded"],
         restaurants: List<Restaurant>.from(
@@ -31,5 +29,40 @@ class RestaurantSearch {
         "error": error,
         "founded": founded,
         "restaurants": List<dynamic>.from(restaurants.map((x) => x.toJson())),
+      };
+}
+
+class Restaurant {
+  String id;
+  String name;
+  String description;
+  String pictureId;
+  String city;
+  double rating;
+  Restaurant({
+    required this.id,
+    required this.name,
+    required this.description,
+    required this.pictureId,
+    required this.city,
+    required this.rating,
+  });
+
+  factory Restaurant.fromJson(Map<String, dynamic> json) => Restaurant(
+        id: json["id"],
+        name: json["name"],
+        description: json["description"],
+        pictureId: json["pictureId"],
+        city: json["city"],
+        rating: json["rating"].toDouble(),
+      );
+
+  Map<String, dynamic> toJson() => {
+        "id": id,
+        "name": name,
+        "description": description,
+        "pictureId": pictureId,
+        "city": city,
+        "rating": rating,
       };
 }

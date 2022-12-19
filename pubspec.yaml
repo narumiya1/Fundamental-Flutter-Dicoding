@@ -66,6 +66,7 @@ flutter:
   assets:
     # - images/a_dot_burr.jpeg
     - assets/local_restaurant.json
+    - assets/no-wifi.png
 
   #   - images/a_dot_ham.jpeg
 

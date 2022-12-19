@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:restaurant_submission1/model/search_model.dart';
 
 import '../model/detail_model.dart';
 import '../model/list_model.dart';
@@ -9,7 +10,10 @@ import '../model/review_model.dart';
 class ApiServ {
   static final String _baseUrl = 'https://restaurant-api.dicoding.dev/';
   static final String baseUrlImg = '${_baseUrl}images/';
-
+  final String smallImageUrl = 'images/small/';
+  final String mediumImageUrl = 'images/medium/';
+  final String largeImageUrl = 'images/large/';
+  final String restaurantSearchUrl = 'search?q=';
   Future<RestaurantList> getRestaurantList() async {
     final response = await http.get(Uri.parse(_baseUrl + "list"));
     if (response.statusCode == 200) {
@@ -43,5 +47,31 @@ class ApiServ {
     } else {
       throw Exception('Failed to post');
     }
+  }
+  Future<SearchRestaurant> search(query) async {
+    final response =
+        await http.get(Uri.parse("$_baseUrl$restaurantSearchUrl$query"));
+    if (response.statusCode == 200) {
+      return SearchRestaurant.fromJson(json.decode(response.body));
+    } else {
+      throw Exception('Failed to load restaurant search');
+    }
+  }
+
+  
+  // image
+  smallImage(pictureId) {
+    String url = "$_baseUrl$smallImageUrl$pictureId";
+    return url;
+  }
+
+  mediumImage(pictureId) {
+    String url = "$_baseUrl$mediumImageUrl$pictureId";
+    return url;
+  }
+
+  largeImage(pictureId) {
+    String url = "$_baseUrl$largeImageUrl$pictureId";
+    return url;
   }
 }

@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:restaurant_submission1/api_data/api_serv.dart';
 import 'package:restaurant_submission1/model/list_model.dart';
+import 'package:restaurant_submission1/provider/restaurant_provider.dart';
+import 'package:restaurant_submission1/provider/search.dart';
 
 import 'package:restaurant_submission1/styles.dart';
 import 'package:restaurant_submission1/ui/detail_page.dart';
+import 'package:restaurant_submission1/ui/search_page.dart';
 
 import 'home_page.dart';
 
@@ -17,7 +22,18 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    return MaterialApp(
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (context) =>
+              RestaurantProvider(apiService: ApiServ()),
+        ),
+        ChangeNotifierProvider(
+          create: (context) =>
+              SearchProvider(restaurantApi: ApiServ()),
+        ),
+      ],
+     child: MaterialApp(
       title: 'Restaurant Apps',
       theme: ThemeData(
         // This is the theme of your application.
@@ -44,7 +60,9 @@ class MyApp extends StatelessWidget {
               restaurant:
                   ModalRoute.of(context)?.settings.arguments as Restaurant,
             ),
+        Search.routeName: (context) => const Search(),
       },
+     )
     );
   }
 }

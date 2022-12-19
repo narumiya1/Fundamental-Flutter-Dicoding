@@ -17,16 +17,13 @@ class CardRestaurant extends StatelessWidget {
         child: ListTile(
       contentPadding:
           const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
-      leading: Hero(
-        tag: restaurant.id,
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(5),
-          child: Image.network(
-            "${ApiServ.baseUrlImg}small/${restaurant.pictureId}",
-            width: 100,
-            height: 110,
-            fit: BoxFit.cover,
-          ),
+       leading: ClipRRect(
+        borderRadius: BorderRadius.circular(10),
+        child: Image.network(
+          ApiServ().mediumImage(restaurant.pictureId),
+          width: 80,
+          height: 120,
+          fit: BoxFit.cover,
         ),
       ),
       title: Text(
