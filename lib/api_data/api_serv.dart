@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:restaurant_submission1/model/search_model.dart';
 
@@ -8,23 +9,34 @@ import '../model/review_model.dart';
 // import '../restarurant_detail_page.dart';
 
 class ApiServ {
-  static final String _baseUrl = 'https://restaurant-api.dicoding.dev/';
-  static final String baseUrlImg = '${_baseUrl}images/';
-  final String smallImageUrl = 'images/small/';
-  final String mediumImageUrl = 'images/medium/';
-  final String largeImageUrl = 'images/large/';
-  final String restaurantSearchUrl = 'search?q=';
-  Future<RestaurantList> getRestaurantList() async {
-    final response = await http.get(Uri.parse(_baseUrl + "list"));
-    if (response.statusCode == 200) {
-      return RestaurantList.fromJson(json.decode(response.body));
-    } else {
-      throw Exception('Failed to loaad');
+  final String baseUrl = 'https://restaurant-api.dicoding.dev';
+  final String restaurantListUrl = '/list';
+  final String restaurantSearchUrl = '/search?q=';
+  final String restaurantDetailUrl = '/detail/';
+
+  final String smallImageUrl = '/images/small/';
+  final String mediumImageUrl = '/images/medium/';
+  final String largeImageUrl = '/images/large/';
+
+  Future<RestaurantList> listRest() async {
+    final response = await http.get(Uri.parse('$baseUrl$restaurantListUrl'));
+    try {
+      if (response.statusCode == 200) {
+        return RestaurantList.fromJson(json.decode(response.body));
+      } else {
+        throw Exception('Failed to get restaurant list');
+      }
+    } on SocketException {
+      throw 'No Internet Connection';
+    } catch (e) {
+      rethrow;
     }
   }
 
-  Future<RestaurantDetail> getRestaurantDetail(String id) async {
-    final response = await http.get(Uri.parse(_baseUrl + "detail/$id"));
+  Future<RestaurantDetail> getRestaurantDetail(
+      id) async {
+    final response =
+        await http.get(Uri.parse('$baseUrl$restaurantDetailUrl$id'));
     if (response.statusCode == 200) {
       return RestaurantDetail.fromJson(json.decode(response.body));
     } else {
@@ -35,7 +47,7 @@ class ApiServ {
   Future<ReviewResponse> postReview(CustomerReview review) async {
     var _review = jsonEncode(review.toJson());
     final response = await http.post(
-      Uri.parse(_baseUrl + "review"),
+      Uri.parse(baseUrl + "review"),
       body: _review,
       headers: <String, String>{
         "Content-Type": "application/json",
@@ -48,9 +60,10 @@ class ApiServ {
       throw Exception('Failed to post');
     }
   }
+
   Future<SearchRestaurant> search(query) async {
     final response =
-        await http.get(Uri.parse("$_baseUrl$restaurantSearchUrl$query"));
+        await http.get(Uri.parse("$baseUrl$restaurantSearchUrl$query"));
     if (response.statusCode == 200) {
       return SearchRestaurant.fromJson(json.decode(response.body));
     } else {
@@ -58,20 +71,19 @@ class ApiServ {
     }
   }
 
-  
   // image
   smallImage(pictureId) {
-    String url = "$_baseUrl$smallImageUrl$pictureId";
+    String url = "$baseUrl$smallImageUrl$pictureId";
     return url;
   }
 
   mediumImage(pictureId) {
-    String url = "$_baseUrl$mediumImageUrl$pictureId";
+    String url = "$baseUrl$mediumImageUrl$pictureId";
     return url;
   }
 
   largeImage(pictureId) {
-    String url = "$_baseUrl$largeImageUrl$pictureId";
+    String url = "$baseUrl$largeImageUrl$pictureId";
     return url;
   }
 }
