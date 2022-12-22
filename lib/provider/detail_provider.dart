@@ -1,42 +1,50 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:restaurant_submission1/model/detail_model.dart';
+import 'package:restaurant_submission1/ui/detail_page.dart';
 // import 'package:restaurant_app/data/api/api_service.dart';
 // import 'package:restaurant_app/data/model/review_model.dart';
+import 'package:http/http.dart' as http;
 
 import '../api_data/api_serv.dart';
 import '../model/review_model.dart';
+import '../result_state.dart';
 
-enum ResultState { Loading, NoData, HasData, Error }
 
 class DetailProvider extends ChangeNotifier {
   final ApiServ apiService;
-  final String id;
 
-  DetailProvider({required this.apiService, required this.id}) {
+  DetailProvider({required this.apiService, required String id}) {
     getRestaurantDetail(id);
   }
 
-  late dynamic _restaurantResult;
   late ResultState _state;
+  late RestaurantDetail _detailRestaurant;
   String _message = '';
 
+  
+  RestaurantDetail get detail => _detailRestaurant;
+  ResultState get state => _state;
   String get message => _message;
 
-  dynamic get result => _restaurantResult;
-
-  ResultState get state => _state;
-
-  Future<dynamic> getRestaurantDetail(String id) async {
+  Future<dynamic> getRestaurantDetail(id) async {
     try {
-      _state = ResultState.Loading;
+      _state = ResultState.loading;
       notifyListeners();
-      final restaurantDetail = await apiService.getRestaurantDetail(id);
-      _state = ResultState.HasData;
-      notifyListeners();
-      return _restaurantResult = restaurantDetail;
+      final resto = await apiService.getRestaurantDetail(id);
+      if (resto.restaurant.toJson().isEmpty) {
+        _state = ResultState.noData;
+        notifyListeners();
+        return _message = 'Data is Empty';
+      } else {
+        _state = ResultState.hasData;
+        notifyListeners();
+        return _detailRestaurant = resto;
+      }
+
     } catch (e) {
-      _state = ResultState.Error;
+      _state = ResultState.error;
       notifyListeners();
       return _message = 'Error: $e';
     }
@@ -48,7 +56,7 @@ class DetailProvider extends ChangeNotifier {
 
       if (!response.error) getRestaurantDetail(review.id!);
     } catch (e) {
-      _state = ResultState.Error;
+      _state = ResultState.error;
       notifyListeners();
       return _message = 'Error: $e';
     }
