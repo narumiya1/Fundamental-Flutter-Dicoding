@@ -1,15 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import 'package:restaurant_submission1/model/detail_model.dart';
 
 import '../api_data/api_serv.dart';
 import '../provider/detail_provider.dart';
+import '../result_state.dart';
 
-class DetailRestaurant extends StatelessWidget {
-  final Restaurant restaurant;
-  final DetailProvider provider;
+class DetailRestaurant extends StatefulWidget {
+  
 
-  const DetailRestaurant({required this.restaurant, required this.provider});
+  const DetailRestaurant({
+    Key? key,
+    required this.id,
+  }) : super(key: key);
+  final String id;
+
+  @override
+  State<DetailRestaurant> createState() => _DetailRestaurantState();
+}
+
+class _DetailRestaurantState extends State<DetailRestaurant> {
 
   /*@override
   Widget build(BuildContext context) {
@@ -322,7 +334,6 @@ class DetailRestaurant extends StatelessWidget {
     );
   }
   */
-
   @override
   Widget build(BuildContext context) {
     Color blackColor = Color(0xff000000);
@@ -342,353 +353,375 @@ class DetailRestaurant extends StatelessWidget {
       color: greyColor,
     );
 
-    return Scaffold(
+    return ChangeNotifierProvider<DetailProvider>(
+      create: (context) => DetailProvider(
+        apiService: ApiServ(),
+        id: widget.id,
+      ),
+      child: Scaffold(
       backgroundColor: Colors.white,
-      body: SafeArea(
-        bottom: false,
-        child: Stack(
-          children: [
-            Image.network(
-              "${ApiServ.baseUrlImg}medium/" + restaurant.pictureId,
-              width: MediaQuery.of(context).size.width,
-              fit: BoxFit.none,
-            ),
-            Positioned(
-              top: 110.0,
-              left: 20.0,
-              child: Container(
-                height: 110,
-                width: 110,
-                decoration: BoxDecoration(
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.4),
-                      spreadRadius: 4,
-                      blurRadius: 4,
-                      offset: Offset(0, 4), // changes position of shadow
+      body: Consumer<DetailProvider>(
+       builder: (context, state, _) {
+       if (state.state == ResultState.loading) {
+              return Center(
+              child: SpinKitThreeBounce(color: Colors.amber),
+              );
+            } else if (state.state == ResultState.hasData) {
+
+              return  Stack(
+                  children: [
+                    Image.network(
+                    ApiServ().largeImage(state.detail.restaurant.pictureId),
+                              width: MediaQuery.of(context).size.width,
+                      fit: BoxFit.none,
                     ),
-                  ],
-                ),
-                child: Card(
-                  elevation: 11.0,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(17.0),
-                        // bottomRight: Radius.circular(14),
-                        // topRight: Radius.circular(14),
-                      ),
-                      side: BorderSide(
-                          width: 2, color: Color.fromARGB(255, 215, 219, 225))),
-                  child: ClipRRect(
-                    child: Image.network(
-                      "${ApiServ.baseUrlImg}medium/" + restaurant.pictureId,
-                      width: 450,
-                      height: 300,
-                      fit: BoxFit.cover,
-                    ),
-                    borderRadius: BorderRadius.circular(23.0),
-                  ),
-                ),
-              ),
-            ),
-            ListView(
-              children: [
-                SizedBox(
-                  height: 225,
-                ),
-                Container(
-                  width: MediaQuery.of(context).size.width,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.vertical(
-                      top: Radius.circular(20),
-                    ),
-                    color: whiteColor,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(
-                        height: 30,
-                      ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: edge,
+                    Positioned(
+                      top: 110.0,
+                      left: 20.0,
+                      child: Container(
+                        height: 110,
+                        width: 110,
+                        decoration: BoxDecoration(
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.4),
+                              spreadRadius: 4,
+                              blurRadius: 4,
+                              offset: Offset(0, 4), // changes position of shadow
+                            ),
+                          ],
                         ),
-                        child: SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        child: Card(
+                          elevation: 11.0,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(17.0),
+                                // bottomRight: Radius.circular(14),
+                                // topRight: Radius.circular(14),
+                              ),
+                              side: BorderSide(
+                                  width: 2, color: Color.fromARGB(255, 215, 219, 225))),
+                          child: ClipRRect(
+                            child: Image.network(
+                              ApiServ()
+                                    .largeImage(state.detail.restaurant.pictureId),
+                                width: 450,
+                              height: 300,
+                              fit: BoxFit.cover,
+                            ),
+                            borderRadius: BorderRadius.circular(23.0),
+                          ),
+                        ),
+                      ),
+                    ),
+                    ListView(
+                      children: [
+                        SizedBox(
+                          height: 225,
+                        ),
+                        Container(
+                          width: MediaQuery.of(context).size.width,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.vertical(
+                              top: Radius.circular(20),
+                            ),
+                            color: whiteColor,
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    restaurant.name,
-                                    style: GoogleFonts.nunito(
-                                      fontWeight: FontWeight.w500,
-                                      color: Colors.black,
-                                    ).copyWith(
-                                      fontSize: 22,
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  Text.rich(
-                                    TextSpan(
-                                      text: 'City : ',
-                                      style: greyTextStyle.copyWith(
-                                        fontSize: mediumFontSize,
-                                      ),
-                                      children: [
-                                        TextSpan(
-                                          text: ' ${restaurant.city}',
-                                          style: blackTextStyle.copyWith(
-                                            fontSize: mediumFontSize,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
+                              SizedBox(
+                                height: 30,
                               ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        height: 21,
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(left: edge),
-                        child: Text(
-                          'Description',
-                          style: GoogleFonts.nunito(
-                            fontWeight: FontWeight.w500,
-                            color: Colors.black,
-                          ).copyWith(
-                            fontSize: 22,
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      SingleChildScrollView(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            Padding(
-                              padding: EdgeInsets.only(left: edge, right: edge),
-                              child: Text(
-                                restaurant.description,
-                                textAlign: TextAlign.justify,
-                                style: blackTextStyle.copyWith(
-                                  fontSize: 14,
-                                  wordSpacing: 2,
+                              Padding(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: edge,
                                 ),
-                              ),
-                            ),
-                            SizedBox(
-                              height: 21,
-                            ),
-                            Container(
-                              height: 130,
-                              child: ListView.builder(
-                                scrollDirection: Axis.horizontal,
-                                itemCount: restaurant.customerReviews.length,
-                                itemBuilder: (BuildContext context, int index) {
-                                  return Padding(
-                                    padding: const EdgeInsets.all(2),
-                                    child: SizedBox(
-                                      width: 200,
-                                      child: Card(
-                                        elevation: 1,
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: Center(
-                                            child: Column(
+                                child: SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            state.detail.restaurant.name,
+                                            style: GoogleFonts.nunito(
+                                              fontWeight: FontWeight.w500,
+                                              color: Colors.black,
+                                            ).copyWith(
+                                              fontSize: 22,
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            height: 10,
+                                          ),
+                                          Text.rich(
+                                            TextSpan(
+                                              text: 'City : ',
+                                              style: greyTextStyle.copyWith(
+                                                fontSize: mediumFontSize,
+                                              ),
                                               children: [
-                                                Text(
-                                                  restaurant
-                                                      .customerReviews[index]
-                                                      .name,
-                                                  style: GoogleFonts.nunito(
-                                                    fontWeight: FontWeight.w500,
-                                                    color: Colors.black,
-                                                  ).copyWith(
-                                                    fontSize: 14,
+                                                TextSpan(
+                                                  text: ' ${state.detail.restaurant.city}',
+                                                  style: blackTextStyle.copyWith(
+                                                    fontSize: mediumFontSize,
                                                   ),
-                                                ),
-                                                Text(
-                                                  restaurant
-                                                      .customerReviews[index]
-                                                      .date,
-                                                  style: GoogleFonts.nunito(
-                                                    fontWeight: FontWeight.w500,
-                                                    color: Colors.black,
-                                                  ).copyWith(
-                                                    fontSize: 14,
-                                                  ),
-                                                ),
-                                                SizedBox(
-                                                  height: 5,
-                                                ),
-                                                Text(
-                                                  '\"' +
-                                                      restaurant
-                                                          .customerReviews[
-                                                              index]
-                                                          .review +
-                                                      '\"',
-                                                  style: GoogleFonts.nunito(
-                                                    fontWeight: FontWeight.w500,
-                                                    color: Colors.black,
-                                                  ).copyWith(
-                                                    fontSize: 14,
-                                                  ),
-                                                  textAlign: TextAlign.center,
-                                                  maxLines: 3,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
                                                 ),
                                               ],
                                             ),
                                           ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              SizedBox(
+                                height: 21,
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(left: edge),
+                                child: Text(
+                                  'Description',
+                                  style: GoogleFonts.nunito(
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.black,
+                                  ).copyWith(
+                                    fontSize: 22,
+                                  ),
+                                ),
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              SingleChildScrollView(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                                  children: [
+                                    Padding(
+                                      padding: EdgeInsets.only(left: edge, right: edge),
+                                      child: Text(
+                                        state.detail.restaurant.description,
+                                        textAlign: TextAlign.justify,
+                                        style: blackTextStyle.copyWith(
+                                          fontSize: 14,
+                                          wordSpacing: 2,
                                         ),
                                       ),
                                     ),
-                                  );
-                                },
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(left: edge),
-                              child: Text(
-                                'Food Menu',
-                                style: GoogleFonts.nunito(
-                                  fontWeight: FontWeight.w500,
-                                  color: Colors.black,
-                                ).copyWith(
-                                  fontSize: 22,
-                                ),
-                              ),
-                            ),
-                            Container(
-                              padding: EdgeInsets.only(left: 17.0),
-                              height: 34,
-                              child: ListView(
-                                scrollDirection: Axis.horizontal,
-                                children: restaurant.menus.foods
-                                    .map(
-                                      (food) => Container(
-                                        margin: const EdgeInsets.symmetric(
-                                            horizontal: 4.0),
-                                        decoration: BoxDecoration(
-                                          color: Colors.blue,
-                                          borderRadius:
-                                              BorderRadius.circular(8.0),
-                                        ),
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: Text(
-                                            food.name,
-                                            style:
-                                                TextStyle(color: Colors.white),
-                                          ),
+                                    SizedBox(
+                                      height: 21,
+                                    ),
+                                    Container(
+                                      height: 130,
+                                      child: ListView.builder(
+                                        scrollDirection: Axis.horizontal,
+                                        itemCount: state.detail.restaurant.customerReviews.length,
+                                        itemBuilder: (BuildContext context, int index) {
+                                          return Padding(
+                                            padding: const EdgeInsets.all(2),
+                                            child: SizedBox(
+                                              width: 200,
+                                              child: Card(
+                                                elevation: 1,
+                                                child: Padding(
+                                                  padding: const EdgeInsets.all(8.0),
+                                                  child: Center(
+                                                    child: Column(
+                                                      children: [
+                                                        Text(
+                                                          state.detail.restaurant
+                                                              .customerReviews[index]
+                                                              .name,
+                                                          style: GoogleFonts.nunito(
+                                                            fontWeight: FontWeight.w500,
+                                                            color: Colors.black,
+                                                          ).copyWith(
+                                                            fontSize: 14,
+                                                          ),
+                                                        ),
+                                                        Text(
+                                                          state.detail.restaurant
+                                                              .customerReviews[index]
+                                                              .date,
+                                                          style: GoogleFonts.nunito(
+                                                            fontWeight: FontWeight.w500,
+                                                            color: Colors.black,
+                                                          ).copyWith(
+                                                            fontSize: 14,
+                                                          ),
+                                                        ),
+                                                        SizedBox(
+                                                          height: 5,
+                                                        ),
+                                                        Text(
+                                                          '\"' +
+                                                              state.detail.restaurant
+                                                                  .customerReviews[
+                                                                      index]
+                                                                  .review +
+                                                              '\"',
+                                                          style: GoogleFonts.nunito(
+                                                            fontWeight: FontWeight.w500,
+                                                            color: Colors.black,
+                                                          ).copyWith(
+                                                            fontSize: 14,
+                                                          ),
+                                                          textAlign: TextAlign.center,
+                                                          maxLines: 3,
+                                                          overflow:
+                                                              TextOverflow.ellipsis,
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.only(left: edge),
+                                      child: Text(
+                                        'Food Menu',
+                                        style: GoogleFonts.nunito(
+                                          fontWeight: FontWeight.w500,
+                                          color: Colors.black,
+                                        ).copyWith(
+                                          fontSize: 22,
                                         ),
                                       ),
-                                    )
-                                    .toList(),
-                              ),
-                            ),
-                            SizedBox(height: 4),
-                            Padding(
-                              padding: EdgeInsets.only(left: edge),
-                              child: Text(
-                                'Drink Menu',
-                                style: GoogleFonts.nunito(
-                                  fontWeight: FontWeight.w500,
-                                  color: Colors.black,
-                                ).copyWith(
-                                  fontSize: 22,
-                                ),
-                              ),
-                            ),
-                            Container(
-                              padding: EdgeInsets.only(left: 17.0),
-                              height: 34,
-                              child: ListView(
-                                scrollDirection: Axis.horizontal,
-                                children: restaurant.menus.drinks
-                                    .map(
-                                      (food) => Container(
-                                        margin: const EdgeInsets.symmetric(
-                                            horizontal: 4.0),
-                                        decoration: BoxDecoration(
-                                          color: Colors.blue,
-                                          borderRadius:
-                                              BorderRadius.circular(8.0),
-                                        ),
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: Text(
-                                            food.name,
-                                            style:
-                                                TextStyle(color: Colors.white),
-                                          ),
+                                    ),
+                                    Container(
+                                      padding: EdgeInsets.only(left: 17.0),
+                                      height: 34,
+                                      child: ListView(
+                                        scrollDirection: Axis.horizontal,
+                                        children: state.detail.restaurant.menus.foods
+                                            .map(
+                                              (food) => Container(
+                                                margin: const EdgeInsets.symmetric(
+                                                    horizontal: 4.0),
+                                                decoration: BoxDecoration(
+                                                  color: Colors.blue,
+                                                  borderRadius:
+                                                      BorderRadius.circular(8.0),
+                                                ),
+                                                child: Padding(
+                                                  padding: const EdgeInsets.all(8.0),
+                                                  child: Text(
+                                                    food.name,
+                                                    style:
+                                                        TextStyle(color: Colors.white),
+                                                  ),
+                                                ),
+                                              ),
+                                            )
+                                            .toList(),
+                                      ),
+                                    ),
+                                    SizedBox(height: 4),
+                                    Padding(
+                                      padding: EdgeInsets.only(left: edge),
+                                      child: Text(
+                                        'Drink Menu',
+                                        style: GoogleFonts.nunito(
+                                          fontWeight: FontWeight.w500,
+                                          color: Colors.black,
+                                        ).copyWith(
+                                          fontSize: 22,
                                         ),
                                       ),
-                                    )
-                                    .toList(),
+                                    ),
+                                    Container(
+                                      padding: EdgeInsets.only(left: 17.0),
+                                      height: 34,
+                                      child: ListView(
+                                        scrollDirection: Axis.horizontal,
+                                        children: state.detail.restaurant.menus.drinks
+                                            .map(
+                                              (food) => Container(
+                                                margin: const EdgeInsets.symmetric(
+                                                    horizontal: 4.0),
+                                                decoration: BoxDecoration(
+                                                  color: Colors.blue,
+                                                  borderRadius:
+                                                      BorderRadius.circular(8.0),
+                                                ),
+                                                child: Padding(
+                                                  padding: const EdgeInsets.all(8.0),
+                                                  child: Text(
+                                                    food.name,
+                                                    style:
+                                                        TextStyle(color: Colors.white),
+                                                  ),
+                                                ),
+                                              ),
+                                            )
+                                            .toList(),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: 27,
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
-                            SizedBox(
-                              height: 27,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: edge,
-                vertical: 30,
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      color: const Color(0xff7c94b6),
-                      borderRadius: BorderRadius.all(Radius.circular(50.0)),
-                      border: Border.all(
-                        color: Color.fromARGB(255, 96, 93, 93),
-                        width: 2.0,
-                      ),
-                    ),
-                    child: CircleAvatar(
-                      backgroundColor: Colors.white,
-                      child: IconButton(
-                          icon: Icon(
-                            Icons.arrow_back,
-                            color: Color.fromARGB(255, 158, 158, 158),
+                            ],
                           ),
-                          onPressed: () {
-                            Navigator.pop(context);
-                          }),
+                        ),
+                      ],
                     ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: edge,
+                        vertical: 30,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(
+                              color: const Color(0xff7c94b6),
+                              borderRadius: BorderRadius.all(Radius.circular(50.0)),
+                              border: Border.all(
+                                color: Color.fromARGB(255, 96, 93, 93),
+                                width: 2.0,
+                              ),
+                            ),
+                            child: CircleAvatar(
+                              backgroundColor: Colors.white,
+                              child: IconButton(
+                                  icon: Icon(
+                                    Icons.arrow_back,
+                                    color: Color.fromARGB(255, 158, 158, 158),
+                                  ),
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  }),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                
+            
+              );
+              
+            }else{
+                 return const Center(
+                child: Text('No Internet Connection'),
+              );
+            };
+            },
       ),
+    ),
     );
   }
 }
