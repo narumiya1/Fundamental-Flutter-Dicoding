@@ -4,6 +4,7 @@ import 'dart:developer' as developer;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
 import 'package:restaurant_submission1/api_data/api_serv.dart';
 import 'package:restaurant_submission1/result_state.dart';
@@ -78,15 +79,8 @@ class _SearchState extends State<Search> {
                 Consumer<SearchProvider>(
                   builder: (context, state, _) {
                     if (state.state == ResultState.loading) {
-                      return Center(
-                        child: Column(
-                          children: [
-                            SizedBox(
-                              height: MediaQuery.of(context).size.height / 3,
-                            ),
-                            
-                          ],
-                        ),
+                     return Center(
+                        child: SpinKitThreeBounce(color: Colors.amber),
                       );
                     } else if (state.state == ResultState.hasData) {
                       return Expanded(
@@ -105,8 +99,10 @@ class _SearchState extends State<Search> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            SizedBox(
-                              height: MediaQuery.of(context).size.height / 3.5,
+                            Center(
+                              child: SizedBox(
+                                height: MediaQuery.of(context).size.height / 3.5,
+                              ),
                             ),
                           
                             const Text(
@@ -116,6 +112,29 @@ class _SearchState extends State<Search> {
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
                                 color: Color(0xffd3d3d3),
+                              ),
+                            )
+                          ],
+                        ),
+                      );
+                    } else if (state.state == ResultState.error) {
+                      return Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Center(
+                              child: SizedBox(
+                                height: MediaQuery.of(context).size.height / 3.5,
+                              ),
+                            ),
+                          
+                            const Text(
+                              'Search Restaurant',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Color.fromARGB(255, 24, 24, 24),
                               ),
                             )
                           ],
@@ -136,7 +155,7 @@ class _SearchState extends State<Search> {
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
-                                color: Color(0xffd3d3d3),
+                                color: Color.fromARGB(255, 17, 14, 14),
                               ),
                             ),
                           ],
@@ -157,7 +176,7 @@ class _SearchState extends State<Search> {
   Widget _buildRestaurantCard(BuildContext context, Restaurant restaurant) {
     return ListTile(
       onTap: () {
-        Navigator.pushNamed(context, '/restaurant_detail',
+        Navigator.pushNamed(context, '/detail_page',
             arguments: restaurant.id);
       },
       contentPadding: const EdgeInsets.symmetric(vertical: 5),
