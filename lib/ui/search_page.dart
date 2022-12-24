@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:developer' as developer;
 
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -12,6 +13,7 @@ import 'package:restaurant_submission1/styles.dart';
 
 import '../model/search_model.dart';
 import '../provider/search.dart';
+import '../widgets/network_disconnected_widget.dart';
 
 class Search extends StatefulWidget {
 
@@ -24,6 +26,31 @@ class Search extends StatefulWidget {
 
 class _SearchState extends State<Search> {
   late TextEditingController textEditingController;
+  ConnectivityResult _connectionStatus = ConnectivityResult.none;
+  final Connectivity _connectivity = Connectivity();
+  late StreamSubscription<ConnectivityResult> subscription;
+
+  Future<void> initConnectivity() async {
+    late ConnectivityResult result;
+
+    try {
+      result = await _connectivity.checkConnectivity();
+    } on PlatformException catch (e) {
+      developer.log("Couldn't check connectivity status", error: e);
+    }
+
+    if (!mounted) {
+      return Future.value(null);
+    }
+
+    return _updateConnectionStatus(result);
+  }
+
+  Future<void> _updateConnectionStatus(ConnectivityResult result) async {
+    setState(() {
+      _connectionStatus = result;
+    });
+  }
 
   @override
   void initState() {
@@ -34,6 +61,13 @@ class _SearchState extends State<Search> {
     textEditingController =
         TextEditingController(text: searchRestaurantProvider.query);
 
+    initConnectivity();
+
+    subscription = Connectivity().onConnectivityChanged.listen((event) {
+      setState(() {
+        _connectionStatus = event;
+      });
+    });
   }
 
   @override
@@ -45,131 +79,149 @@ class _SearchState extends State<Search> {
   @override
   Widget build(BuildContext context) {
   
-  
-      return Scaffold(
-        body: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.only(left: 24, right: 24, top: 30),
-            child: Column(
-              children: [
-                Consumer<SearchProvider>(
-                  builder: (context, state, _) {
-                    return TextField(
-                      onChanged: (value) {
-                        Provider.of<SearchProvider>(context,
-                                listen: false)
-                            .searchRestaurant(value);
-                      },
-                      controller: textEditingController,
-                      decoration: InputDecoration(
-                        filled: true,
-                        fillColor: Colors.white,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                        hintText: 'Search Restaurant',
-                        prefixIcon: const Icon(Icons.search),
-                      ),
-                    );
-                  },
-                ),
-                const SizedBox(
-                  height: 15,
-                ),
-                Consumer<SearchProvider>(
-                  builder: (context, state, _) {
-                    if (state.state == ResultState.loading) {
-                     return Center(
-                        child: SpinKitThreeBounce(color: Colors.amber),
-                      );
-                    } else if (state.state == ResultState.hasData) {
-                      return Expanded(
-                        child: ListView.builder(
-                          physics: const BouncingScrollPhysics(),
-                          shrinkWrap: true,
-                          itemCount: state.search.founded.toInt(),
-                          itemBuilder: (context, index) {
-                            final restaurant = state.search.restaurants[index];
-                            return _buildRestaurantCard(context, restaurant);
-                          },
+      if(_connectionStatus != ConnectivityResult.none){
+        return Scaffold(
+          resizeToAvoidBottomInset: false,
+          body: SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.only(left: 24, right: 24, top: 30),
+              child: Column(
+                children: [
+                  Consumer<SearchProvider>(
+                    builder: (context, state, _) {
+                      return TextField(
+                        onChanged: (value) {
+                          Provider.of<SearchProvider>(context,
+                              listen: false)
+                              .searchRestaurant(value);
+                        },
+                        controller: textEditingController,
+                        decoration: InputDecoration(
+                          filled: true,
+                          fillColor: Colors.white,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          hintText: 'Search Restaurant',
+                          prefixIcon: const Icon(Icons.search),
                         ),
                       );
-                    } else if (state.state == ResultState.noData) {
-                      return Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Center(
-                              child: SizedBox(
-                                height: MediaQuery.of(context).size.height / 3.5,
+                    },
+                  ),
+                  const SizedBox(
+                    height: 15,
+                  ),
+                  Consumer<SearchProvider>(
+                    builder: (context, state, _) {
+                      if (state.state == ResultState.loading) {
+                        return Center(
+                          child: SpinKitThreeBounce(color: Colors.amber),
+                        );
+                      } else if (state.state == ResultState.hasData) {
+                        return Expanded(
+                          child: ListView.builder(
+                            physics: const BouncingScrollPhysics(),
+                            shrinkWrap: true,
+                            itemCount: state.search.founded.toInt(),
+                            itemBuilder: (context, index) {
+                              final restaurant = state.search.restaurants[index];
+                              return _buildRestaurantCard(context, restaurant);
+                            },
+                          ),
+                        );
+                      } else if (state.state == ResultState.noData) {
+                        return Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Center(
+                                child: SizedBox(
+                                  height: MediaQuery.of(context).size.height / 3.5,
+                                ),
                               ),
-                            ),
-                          
-                            const Text(
-                              'Couldn\'t find the restaurant you looking for',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: Color(0xffd3d3d3),
+
+                              const Text(
+                                'Couldn\'t find the restaurant you looking for',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xffd3d3d3),
+                                ),
+                              )
+                            ],
+                          ),
+                        );
+                      } else {
+                        return Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              SizedBox(
+                                height: MediaQuery.of(context).size.height / 3,
                               ),
-                            )
-                          ],
-                        ),
-                      );
-                    } else if (state.state == ResultState.error) {
-                      return Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Center(
-                              child: SizedBox(
-                                height: MediaQuery.of(context).size.height / 3.5,
+
+                              const Text(
+                                'Search for your favorite restaurants',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Color.fromARGB(255, 17, 14, 14),
+                                ),
                               ),
-                            ),
-                          
-                            const Text(
-                              'Search Restaurant',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: Color.fromARGB(255, 24, 24, 24),
-                              ),
-                            )
-                          ],
-                        ),
-                      );
-                    } else {
-                      return Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SizedBox(
-                              height: MediaQuery.of(context).size.height / 3,
-                            ),
-                         
-                            const Text(
-                              'Search for your favorite restaurants',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: Color.fromARGB(255, 17, 14, 14),
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    }
-                  },
-                ),
-              ],
+                            ],
+                          ),
+                        );
+                      }
+                    },
+                  ),
+                ],
+              ),
             ),
           ),
-        ),
-      );
-  
+        );
+
+      }else{
+        return Scaffold(
+          body: SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.only(left: 24, right: 24, top: 30),
+              child: Column(
+                children: [
+                  Consumer<SearchProvider>(
+                    builder: (context, state, _) {
+                      return TextField(
+                        onChanged: (value) {
+                          Provider.of<SearchProvider>(context,
+                              listen: false)
+                              .searchRestaurant(value);
+                        },
+                        controller: textEditingController,
+                        decoration: InputDecoration(
+                          filled: true,
+                          fillColor: Colors.white,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          hintText: 'eg: Tempat Siang Hari',
+                          prefixIcon: const Icon(Icons.search),
+                        ),
+                      );
+                    },
+                  ),
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height / 3.5,
+                  ),
+                  const NetworkDisconnected(),
+                ],
+              ),
+            ),
+          ),
+        );
+
+      }
+
       } 
   }
 
