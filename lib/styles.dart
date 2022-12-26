@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 final Color primaryColor = Color.fromARGB(255, 244, 246, 246);
 final Color secondaryColor = Color.fromARGB(255, 125, 127, 128);
 final Color thirdColor = Color.fromARGB(255, 51, 52, 52);
+final Color detailColor = Color.fromARGB(255, 92, 159, 215);
 
 final TextTheme textTheme = TextTheme(
   headline1: GoogleFonts.nunito(
