@@ -42,6 +42,19 @@ dependencies:
   connectivity_plus: ^2.3.8
   blurrycontainer: ^1.0.2
   material_design_icons_flutter: ^5.0.6996
+  sqflite: ^2.2.2
+  lottie: ^1.2.1
+  curved_navigation_bar: ^1.0.1
+  bottom_navy_bar: ^6.0.0
+  rxdart: ^0.27.3
+  intl: ^0.17.0
+  android_alarm_manager_plus: ^2.1.0
+  auto_size_text: ^2.1.0
+  transparent_image: ^2.0.0
+  readmore: ^2.1.0
+  shared_preferences: ^2.0.15
+  flutter_local_notifications: ^13.0.0
+  fluttertoast: ^8.1.1
 
 dev_dependencies:
   flutter_test:
