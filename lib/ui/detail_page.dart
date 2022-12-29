@@ -1,8 +1,11 @@
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:restaurant_submission1/home_page.dart';
+import 'package:restaurant_submission1/provider/database_provider.dart';
+import 'package:restaurant_submission1/ui/main_page.dart';
 import 'package:restaurant_submission1/model/detail_model.dart';
 import 'package:restaurant_submission1/styles.dart';
 import 'package:restaurant_submission1/widgets/expanded_text.dart';
@@ -10,9 +13,8 @@ import 'package:restaurant_submission1/widgets/expanded_text.dart';
 import '../api_data/api_serv.dart';
 import '../provider/detail_provider.dart';
 import '../result_state.dart';
-import '../widgets/detail.dart';
 
-class DetailPage extends StatelessWidget {
+class DetailPage extends StatefulWidget {
   const DetailPage({
     Key? key,
     required this.id,
@@ -24,11 +26,16 @@ class DetailPage extends StatelessWidget {
   final String id;
 
   @override
+  State<DetailPage> createState() => _DetailPageState();
+}
+
+class _DetailPageState extends State<DetailPage> {
+  @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<DetailProvider>(
       create: (context) => DetailProvider(
         apiService: ApiServ(),
-        id:id,
+        id: widget.id,
       ),
       child: Scaffold(
         body: Consumer<DetailProvider>(
@@ -50,7 +57,7 @@ class DetailPage extends StatelessWidget {
                           Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => HomePage(),
+                                builder: (context) => MainPage(),
                               ));
                         },
                         icon: const Icon(
@@ -114,6 +121,60 @@ class DetailPage extends StatelessWidget {
                                   _rating(state.detail.restaurant),
                                 ],
                               ),
+                              //Favorite restaurant database
+                              Consumer<DatabaseProovider>(
+                                builder: (context, providers, child) {
+                                  return FutureBuilder(
+                                    future: providers
+                                        .isFav(state.detail.restaurant.id),
+                                    builder: (context, snaapshots) {
+
+                                      var isFavoriteRestaurant =
+                                          snaapshots.data ?? false;
+
+                                      if (isFavoriteRestaurant == true) {
+                                        return IconButton(
+                                            onPressed: () {
+                                              providers.removeFavourite(
+                                                  state.detail.restaurant.id);
+                                              Fluttertoast.showToast(
+                                                msg:
+                                                    '${state.detail.restaurant.name} removed from favorite',
+                                                backgroundColor: secondaryColor,
+                                                textColor: Colors.white,
+                                                gravity: ToastGravity.BOTTOM,
+                                              );
+                                              setState(() {});
+                                            },
+                                            icon: const Icon(
+                                                MdiIcons.heartCircle,
+                                                size: 45,
+                                                color: Colors.blue));
+                                      } else {
+                                        return IconButton(
+                                          onPressed: () {
+                                            providers.addFavourite(
+                                                state.detail.restaurant.id);
+                                            Fluttertoast.showToast(
+                                              msg:
+                                                  '${state.detail.restaurant.name} added to favorite',
+                                              backgroundColor: secondaryColor,
+                                              textColor: Colors.white,
+                                              gravity: ToastGravity.BOTTOM,
+                                            );
+                                            setState(() {});
+                                          },
+                                          icon: const Icon(
+                                            MdiIcons.heartCircleOutline,
+                                            size: 45,
+                                            color: Colors.blue,
+                                          ),
+                                        );
+                                      }
+                                    },
+                                  );
+                                },
+                              ),
                             ],
                           ),
                         ),
@@ -151,7 +212,8 @@ class DetailPage extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Padding(
-                          padding: const EdgeInsets.only(top:8,left: 23, bottom: 10),
+                          padding: const EdgeInsets.only(
+                              top: 8, left: 23, bottom: 10),
                           child: Text(
                             'Menu',
                             style: textTheme.headlineMedium,
@@ -159,12 +221,10 @@ class DetailPage extends StatelessWidget {
                         ),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 24),
-
                           child: Text(
                             'Drinks',
                             style: textTheme.headlineSmall,
                           ),
-
                         ),
                         const SizedBox(
                           height: 10,
@@ -172,25 +232,28 @@ class DetailPage extends StatelessWidget {
                         SingleChildScrollView(
                           scrollDirection: Axis.horizontal,
                           child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 18.0),
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 18.0),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: state.detail.restaurant.menus.drinks
                                   .map((food) => Container(
-                                margin: const EdgeInsets.symmetric(
-                                    horizontal: 4.0),
-                                decoration: BoxDecoration(
-                                  color: detailColor,
-                                  borderRadius: BorderRadius.circular(8.0),
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text(
-                                    food.name,
-                                    style: TextStyle(color: Colors.white),
-                                  ),
-                                ),
-                              ))
+                                        margin: const EdgeInsets.symmetric(
+                                            horizontal: 4.0),
+                                        decoration: BoxDecoration(
+                                          color: detailColor,
+                                          borderRadius:
+                                              BorderRadius.circular(8.0),
+                                        ),
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Text(
+                                            food.name,
+                                            style:
+                                                TextStyle(color: Colors.white),
+                                          ),
+                                        ),
+                                      ))
                                   .toList(),
                             ),
                           ),
@@ -212,26 +275,28 @@ class DetailPage extends StatelessWidget {
                         SingleChildScrollView(
                           scrollDirection: Axis.horizontal,
                           child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 18.0),
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 18.0),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: state.detail.restaurant.menus.foods
                                   .map((food) => Container(
-
-                                margin: const EdgeInsets.symmetric(
-                                    horizontal: 4.0),
-                                decoration: BoxDecoration(
-                                  color: detailColor,
-                                  borderRadius: BorderRadius.circular(8.0),
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text(
-                                    food.name,
-                                    style: TextStyle(color: Colors.white),
-                                  ),
-                                ),
-                              ))
+                                        margin: const EdgeInsets.symmetric(
+                                            horizontal: 4.0),
+                                        decoration: BoxDecoration(
+                                          color: detailColor,
+                                          borderRadius:
+                                              BorderRadius.circular(8.0),
+                                        ),
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Text(
+                                            food.name,
+                                            style:
+                                                TextStyle(color: Colors.white),
+                                          ),
+                                        ),
+                                      ))
                                   .toList(),
                             ),
                           ),
