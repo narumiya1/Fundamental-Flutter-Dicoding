@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:restaurant_submission1/model/list_model.dart';
@@ -30,7 +29,7 @@ class RestaurantProvider extends ChangeNotifier {
       _state = ResultState.loading;
       notifyListeners();
       // final restaurantList = await apiService.getRestaurantList();
-      final restaurant = await apiService.listRest();
+      final restaurant = await apiService.listRest(http.Client());
       if (restaurant.restaurants.isEmpty) {
         _state = ResultState.noData;
         notifyListeners();
@@ -40,7 +39,7 @@ class RestaurantProvider extends ChangeNotifier {
         notifyListeners();
         return _listRestaurant = restaurant;
       }
-      notifyListeners();
+      // notifyListeners();
     } catch (e) {
       _state = ResultState.error;
       notifyListeners();
