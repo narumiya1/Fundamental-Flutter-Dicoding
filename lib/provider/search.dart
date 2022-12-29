@@ -3,6 +3,7 @@ import 'package:restaurant_submission1/api_data/api_serv.dart';
 import 'package:restaurant_submission1/model/search_model.dart';
 
 import '../result_state.dart';
+import 'package:http/http.dart' as http;
 
 
 class  SearchProvider extends ChangeNotifier {
@@ -37,7 +38,7 @@ class  SearchProvider extends ChangeNotifier {
     try {
       _state = ResultState.loading;
       notifyListeners();
-      final restaurant = await restaurantApi.search(query);
+      final restaurant = await restaurantApi.search(query, http.Client());
       if (restaurant.restaurants.isEmpty) {
         _state = ResultState.noData;
         notifyListeners();
