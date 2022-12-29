@@ -5,7 +5,6 @@ import 'package:restaurant_submission1/model/search_model.dart';
 
 import '../model/detail_model.dart';
 import '../model/list_model.dart';
-import '../model/review_model.dart';
 // import '../restarurant_detail_page.dart';
 
 class ApiServ {
@@ -18,8 +17,8 @@ class ApiServ {
   final String mediumImageUrl = '/images/medium/';
   final String largeImageUrl = '/images/large/';
 
-  Future<RestaurantList> listRest() async {
-    final response = await http.get(Uri.parse('$baseUrl$restaurantListUrl'));
+  Future<RestaurantList> listRest(http.Client client) async {
+    final response = await client.get(Uri.parse('$baseUrl$restaurantListUrl'));
     try {
       if (response.statusCode == 200) {
         return RestaurantList.fromJson(json.decode(response.body));
@@ -34,34 +33,24 @@ class ApiServ {
   }
 
   Future<RestaurantDetail> getRestaurantDetail(
-      id) async {
+      id, http.Client client) async {
     final response =
         await http.get(Uri.parse('$baseUrl$restaurantDetailUrl$id'));
-    if (response.statusCode == 200) {
-      return RestaurantDetail.fromJson(json.decode(response.body));
-    } else {
-      throw Exception('Failed to load');
+    try{
+      if (response.statusCode == 200) {
+        return RestaurantDetail.fromJson(json.decode(response.body));
+      } else {
+        throw Exception('Failed to load');
+      }
+    }on SocketException{
+      throw 'No Internet Connection';
+    } catch(e){
+      rethrow;
     }
   }
 
-  Future<ReviewResponse> postReview(CustomerReview review) async {
-    var _review = jsonEncode(review.toJson());
-    final response = await http.post(
-      Uri.parse(baseUrl + "review"),
-      body: _review,
-      headers: <String, String>{
-        "Content-Type": "application/json",
-        "X-Auth-Token": "12345",
-      },
-    );
-    if (response.statusCode == 200) {
-      return ReviewResponse.fromJson(json.decode(response.body));
-    } else {
-      throw Exception('Failed to post');
-    }
-  }
 
-  Future<SearchRestaurant> search(query) async {
+  Future<SearchRestaurant> search(query, http.Client client) async {
     final response =
         await http.get(Uri.parse("$baseUrl$restaurantSearchUrl$query"));
     if (response.statusCode == 200) {
