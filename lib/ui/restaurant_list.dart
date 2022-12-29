@@ -5,32 +5,27 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:restaurant_submission1/api_data/api_serv.dart';
 import 'package:restaurant_submission1/provider/restaurant_provider.dart';
-import 'package:restaurant_submission1/restarurant_detail_page.dart';
 import 'package:restaurant_submission1/styles.dart';
-import 'package:restaurant_submission1/ui/detail_page.dart';
-import 'package:restaurant_submission1/utils/navigation.dart';
-import 'package:restaurant_submission1/widgets/list.dart';
 import 'package:restaurant_submission1/widgets/network_disconnected_widget.dart';
 import 'package:restaurant_submission1/widgets/title_widget.dart';
 
-import 'model/list_model.dart';
-import 'result_state.dart';
+import '../model/list_model.dart';
+import '../result_state.dart';
 import 'dart:developer' as developer;
 
-class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+class RestraurantLists extends StatefulWidget {
+  const RestraurantLists({Key? key}) : super(key: key);
 
   static const routeName = '/home_page';
 
   @override
-  State<HomePage> createState() => HomePageState();
+  State<RestraurantLists> createState() => RestraurantListsState();
 }
 
-class HomePageState extends State<HomePage> {
+class RestraurantListsState extends State<RestraurantLists> {
   ConnectivityResult _connectionStatus = ConnectivityResult.none;
   final Connectivity _connectivity = Connectivity();
   late StreamSubscription<ConnectivityResult> subscription;
