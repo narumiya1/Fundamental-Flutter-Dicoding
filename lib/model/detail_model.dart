@@ -109,12 +109,12 @@ class Menus {
     required this.drinks,
   });
 
-  List<Drink> foods;
-  List<Drink> drinks;
+  List<Category> foods;
+  List<Category> drinks;
 
   factory Menus.fromJson(Map<String, dynamic> json) => Menus(
-        foods: List<Drink>.from(json["foods"].map((x) => Drink.fromJson(x))),
-        drinks: List<Drink>.from(json["drinks"].map((x) => Drink.fromJson(x))),
+        foods: List<Category>.from(json["foods"].map((x) => Category.fromJson(x))),
+        drinks: List<Category>.from(json["drinks"].map((x) => Category.fromJson(x))),
       );
 
   Map<String, dynamic> toJson() => {
@@ -123,17 +123,3 @@ class Menus {
       };
 }
 
-class Drink {
-  Drink({
-    required this.name,
-  });
-
-  String name;
-  factory Drink.fromJson(Map<String, dynamic> json) => Drink(
-        name: json["name"],
-      );
-
-  Map<String, dynamic> toJson() => {
-        "name": name,
-      };
-}
