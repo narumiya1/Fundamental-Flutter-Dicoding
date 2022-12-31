@@ -77,7 +77,7 @@ class RestraurantListsState extends State<RestraurantLists> {
     if (_connectionStatus != ConnectivityResult.none) {
       return Scaffold(
         appBar: AppBar(
-          title: const Text('Submission Restaurant 2'),
+          title: const Text('Submission Restaurant 3'),
           leading: IconButton(
             icon: _searchIcon,
             iconSize: 30,
