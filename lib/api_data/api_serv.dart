@@ -35,12 +35,12 @@ class ApiServ {
   Future<RestaurantDetail> getRestaurantDetail(
       id, http.Client client) async {
     final response =
-        await http.get(Uri.parse('$baseUrl$restaurantDetailUrl$id'));
-    try{
+    await client.get(Uri.parse('$baseUrl$restaurantDetailUrl$id'));
+    try {
       if (response.statusCode == 200) {
         return RestaurantDetail.fromJson(json.decode(response.body));
       } else {
-        throw Exception('Failed to load');
+        throw Exception('Failed to get detail restaurant');
       }
     }on SocketException{
       throw 'No Internet Connection';
