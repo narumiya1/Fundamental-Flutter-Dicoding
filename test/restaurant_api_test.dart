@@ -33,7 +33,36 @@ void main() {
         },
       );
 
-
+      test(
+        "Return a Detail of restaurants",
+            () async {
+          final client = MockClient(
+                (request) async {
+              final response = {
+                "error": false,
+                "message": "success",
+                "restaurant": {
+                  "id": "",
+                  "name": "",
+                  "description": "",
+                  "city": "",
+                  "address": "",
+                  "pictureId": "",
+                  "categories": [],
+                  "menus": {"foods": [], "drinks": []},
+                  "rating": 1.0,
+                  "customerReviews": []
+                }
+              };
+              return Response(json.encode(response), 200);
+            },
+          );
+          expect(
+            await ApiServ().getRestaurantDetail('Restaurant Id', client),
+            isA<RestaurantDetail>(),
+          );
+        },
+      );
       test(
         'for Restaurant Search',
             () async {
