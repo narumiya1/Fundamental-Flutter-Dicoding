@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:http/http.dart' as http;
 import 'package:restaurant_submission1/api_data/api_serv.dart';
+import 'package:restaurant_submission1/constant/navigationn.dart';
 import 'package:rxdart/rxdart.dart';
 
 import '../model/detail_model.dart';
@@ -80,7 +81,7 @@ class NotificationHelper {
     selectNotificationSubject.stream.listen((String payload) async {
       var data = Restaurant.fromJson(json.decode(payload));
 
-      Navigator.pushNamed(context, route, arguments: data.id);
+      await Navigator.pushNamed(context, route, arguments: data.id);
     });
   }
 }
