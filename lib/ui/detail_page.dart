@@ -63,7 +63,6 @@ class _DetailPageState extends State<DetailPage> {
                         icon: const Icon(
                           Icons.arrow_back_outlined,
                           size: 35,
-                          color: Colors.blue,
                         ),
                       ),
                     ),
@@ -121,21 +120,18 @@ class _DetailPageState extends State<DetailPage> {
                                   _rating(state.detail.restaurant),
                                 ],
                               ),
-                              //Favorite restaurant database
-                              Consumer<DatabaseProovider>(
-                                builder: (context, providers, child) {
-                                  return FutureBuilder(
-                                    future: providers
-                                        .isFav(state.detail.restaurant.id),
-                                    builder: (context, snaapshots) {
-
-                                      var isFavoriteRestaurant =
-                                          snaapshots.data ?? false;
-
-                                      if (isFavoriteRestaurant == true) {
-                                        return IconButton(
+                              Expanded(
+                                child: Consumer<DatabaseProovider>(
+                                  builder: (context, provider, child) {
+                                    return FutureBuilder(
+                                      future: provider
+                                          .isFav(state.detail.restaurant.id),
+                                      builder: (context, snapshot) {
+                                        var isFavorite = snapshot.data ?? false;
+                                        if (isFavorite == true) {
+                                          return IconButton(
                                             onPressed: () {
-                                              providers.removeFavourite(
+                                              provider.removeFavourite(
                                                   state.detail.restaurant.id);
                                               Fluttertoast.showToast(
                                                 msg:
@@ -147,33 +143,36 @@ class _DetailPageState extends State<DetailPage> {
                                               setState(() {});
                                             },
                                             icon: const Icon(
-                                                MdiIcons.heartCircle,
-                                                size: 45,
-                                                color: Colors.blue));
-                                      } else {
-                                        return IconButton(
-                                          onPressed: () {
-                                            providers.addFavourite(
-                                                state.detail.restaurant.id);
-                                            Fluttertoast.showToast(
-                                              msg:
-                                                  '${state.detail.restaurant.name} added to favorite',
-                                              backgroundColor: secondaryColor,
-                                              textColor: Colors.white,
-                                              gravity: ToastGravity.BOTTOM,
-                                            );
-                                            setState(() {});
-                                          },
-                                          icon: const Icon(
-                                            MdiIcons.heartCircleOutline,
-                                            size: 45,
-                                            color: Colors.blue,
-                                          ),
-                                        );
-                                      }
-                                    },
-                                  );
-                                },
+                                              MdiIcons.heartCircle,
+                                              size: 50,
+                                              color: Colors.redAccent,
+                                            ),
+                                          );
+                                        } else {
+                                          return IconButton(
+                                            onPressed: () {
+                                              provider.addFavourite(
+                                                  state.detail.restaurant.id);
+                                              Fluttertoast.showToast(
+                                                msg:
+                                                '${state.detail.restaurant.name} added to favorite',
+                                                backgroundColor: secondaryColor,
+                                                textColor: Colors.white,
+                                                gravity: ToastGravity.BOTTOM,
+                                              );
+                                              setState(() {});
+                                            },
+                                            icon: const Icon(
+                                              MdiIcons.heartCircleOutline,
+                                              size: 50,
+                                              color: Colors.redAccent,
+                                            ),
+                                          );
+                                        }
+                                      },
+                                    );
+                                  },
+                                ),
                               ),
                             ],
                           ),
@@ -212,8 +211,7 @@ class _DetailPageState extends State<DetailPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Padding(
-                          padding: const EdgeInsets.only(
-                              top: 8, left: 23, bottom: 10),
+                          padding: const EdgeInsets.only(left: 23, bottom: 10),
                           child: Text(
                             'Menu',
                             style: textTheme.headlineMedium,
