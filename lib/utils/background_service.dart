@@ -23,7 +23,7 @@ class BackgroundService {
   }
 
   static Future<void> callback() async {
-    debugPrint('Notification coming');
+    print('Notification coming');
     final NotificationHelper notificationHelper = NotificationHelper();
     await notificationHelper.showNotification(flutterLocalNotificationsPlugin);
 
